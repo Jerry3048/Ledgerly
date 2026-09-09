@@ -63,6 +63,26 @@ a{color:inherit;}
   flex:0 0 auto;
 }
 
+/* ---------------- Brand mark (Legerly icon + name) ---------------- */
+.brand-icon{
+  display:inline-flex; align-items:center; justify-content:center;
+  width:30px; height:30px; border-radius:7px; flex:0 0 auto;
+  background:var(--brass); color:#221a0f;
+  border:1px solid var(--brass-dark);
+}
+.brand-icon svg{display:block;}
+.login-brand .brand-icon{width:34px; height:34px;}
+.brand-name{
+  font-family:var(--font-display); font-weight:700; font-size:17px;
+  letter-spacing:0.03em;
+}
+.mobile-brand{
+  display:inline-flex; align-items:center; gap:8px;
+  font-family:var(--font-display); font-weight:700; font-size:14px;
+  letter-spacing:0.04em; text-transform:uppercase;
+}
+.mobile-brand .brand-icon{width:26px; height:26px; border-radius:6px;}
+
 /* =========================================================
    LOGIN SCREEN
    ========================================================= */
@@ -167,8 +187,8 @@ a{color:inherit;}
 .sidebar-brand .hole{
   background:radial-gradient(circle at 35% 30%, #fff 0%, #cbd6c4 55%, #94a08a 100%);
 }
-.sidebar-brand span{
-  font-family:var(--font-display); font-weight:700; font-size:15px;
+.sidebar-brand .brand-name{
+  font-family:var(--font-display); font-weight:700; font-size:17px;
   letter-spacing:0.03em; text-transform:uppercase;
 }
 .nav-group-label{

@@ -5,6 +5,28 @@
    ========================================================= */
 import React from 'react';
 
+/** Brand mark for "Legerly" — ledger-book icon used next to the name. */
+export function BrandIcon() {
+  return (
+    <span className="brand-icon" aria-hidden="true">
+      <svg
+        viewBox="0 0 24 24"
+        width="18"
+        height="18"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.9"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <path d="M5 3.5h11A2.5 2.5 0 0 1 18.5 6v13.5a.5.5 0 0 1-.8.4L15 17.6l-2.7 2.3a.5.5 0 0 1-.8-.4V6A2.5 2.5 0 0 0 9 3.5H5z" />
+        <path d="M5 3.5v17a.5.5 0 0 0 .8.4L9 18.2l3.2 2.7a.5.5 0 0 0 .8-.4v-1" />
+        <path d="M12.5 8h3M12.5 11h3" />
+      </svg>
+    </span>
+  );
+}
+
 /** Shared modal shell — .modal-overlay/.modal/.modal-head/.modal-body/.modal-foot */
 export function Modal({ title, onClose, children, footer }) {
   return (

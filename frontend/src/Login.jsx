@@ -5,7 +5,7 @@
 import React, { useState } from 'react';
 import { api } from './api';
 import { useApp } from './store';
-import { Modal } from './components';
+import { BrandIcon, Modal } from './components';
 
 function RegisterModal({ onClose }) {
   const { toast } = useApp();
@@ -105,8 +105,8 @@ export default function Login() {
     <div className="login-screen">
       <div className="login-card">
         <div className="login-brand">
-          <span className="hole"></span>
-          <h1>Lab Overall Ledger</h1>
+          <BrandIcon />
+          <h1>Legerly</h1>
         </div>
         <p className="login-sub">
           Equipment &amp; consumable inventory, borrowing and maintenance

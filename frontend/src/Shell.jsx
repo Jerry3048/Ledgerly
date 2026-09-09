@@ -5,6 +5,7 @@
 import React, { useEffect, useState } from 'react';
 import { api, isOverdue } from './api';
 import { roleLabels, useApp } from './store';
+import { BrandIcon } from './components';
 import DashboardView from './views/Dashboard';
 import EquipmentView from './views/Equipment';
 import ConsumablesView from './views/Consumables';
@@ -50,7 +51,7 @@ export default function Shell() {
 
   // Keep document title in sync with the active view.
   useEffect(() => {
-    document.title = 'Lab Overall Ledger — ' + view;
+    document.title = 'Legerly — ' + view;
   }, [view]);
 
   const logout = async () => {
@@ -71,8 +72,8 @@ export default function Shell() {
 
       <aside className={'sidebar' + (navOpen ? ' open' : '')}>
         <div className="sidebar-brand">
-          <span className="hole"></span>
-          <span>Lab Overall Ledger</span>
+          <BrandIcon />
+          <span className="brand-name">Legerly</span>
           {/* X button — only visible on small screens, slides drawer back in */}
           <button
             className="sidebar-close"
@@ -183,7 +184,10 @@ export default function Shell() {
               <span></span>
             </span>
           </button>
-          <span className="mobile-brand">Lab Overall Ledger</span>
+          <span className="mobile-brand">
+            <BrandIcon />
+            Legerly
+          </span>
         </div>
         <div className={'view' + (view === 'dashboard' ? ' active' : '')}>
           {view === 'dashboard' && <DashboardView />}
