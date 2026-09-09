@@ -1,0 +1,16 @@
+# Dependencies
+node_modules/
+
+# Environment — never commit real credentials
+.env
+
+# SQLite database (no longer used after Postgres migration)
+*.sqlite
+*.sqlite3
+
+# Drizzle Kit output (optional — commit if you want migration history)
+# drizzle/
+
+# OS
+.DS_Store
+Thumbs.db

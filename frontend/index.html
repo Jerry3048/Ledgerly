@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lab Overall Ledger — Laboratory Equipment Inventory &amp; Maintenance</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- ================= LOGIN ================= -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-card">
+    <div class="login-brand">
+      <span class="hole"></span>
+      <h1>Lab Overall Ledger</h1>
+    </div>
+    <p class="login-sub">Equipment &amp; consumable inventory, borrowing and maintenance register.</p>
+
+    <form id="loginForm">
+      <div class="field">
+        <label for="username">Username</label>
+        <input type="text" id="username" autocomplete="username" required>
+      </div>
+      <div class="field">
+        <label for="password">Password</label>
+        <input type="password" id="password" autocomplete="current-password" required>
+      </div>
+      <p class="login-error" id="loginError"></p>
+      <button type="submit" class="btn-primary">Sign in to register</button>
+      <button type="button" class="btn secondary" id="registerBtn">Create Student / Lecturer Account</button>
+    </form>
+
+    <div class="login-demo">
+      <strong>Demo credentials</strong><br>
+      Administrator — admin / admin123<br>
+      Lab Officer — officer / officer123<br>
+      Lecturer — lecturer / lecturer123<br>
+      Student — student / student123<br>
+      <em>Staff (Admin/Officer) accounts can only be created by an administrator from Users &amp; Access — self-registration is limited to Student/Lecturer.</em>
+    </div>
+  </div>
+</div>
+
+<!-- ================= APP SHELL ================= -->
+<div class="app-shell" id="appShell">
+
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <span class="hole"></span>
+      <span>Lab Overall Ledger</span>
+    </div>
+
+    <div class="nav-group-label">Overview</div>
+    <button class="nav-item active" data-view="dashboard"><span class="tab-mark"></span>Dashboard</button>
+
+    <div class="nav-group-label">Registers</div>
+    <button class="nav-item" data-view="equipment"><span class="tab-mark"></span>Equipment</button>
+    <button class="nav-item" data-view="consumables"><span class="tab-mark"></span>Consumables<span class="nav-badge" id="badgeLowStock" style="display:none;"></span></button>
+    <button class="nav-item" data-view="borrow"><span class="tab-mark"></span><span id="borrowNavLabel">Borrow &amp; Return</span><span class="nav-badge" id="badgeOverdue" style="display:none;"></span></button>
+    <button class="nav-item" data-view="maintenance" id="navMaintenance"><span class="tab-mark"></span>Maintenance</button>
+
+    <div class="nav-group-label" id="insightsGroupLabel">Insights</div>
+    <button class="nav-item" data-view="reports" id="navReports"><span class="tab-mark"></span>Reports</button>
+    <button class="nav-item" data-view="users" id="navUsers"><span class="tab-mark"></span>Users &amp; Access</button>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <span id="sidebarUserName">—</span>
+        <span class="role-pill" id="sidebarUserRole">—</span>
+      </div>
+      <button class="logout-btn" id="logoutBtn">Sign out</button>
+    </div>
+  </aside>
+
+  <main class="main">
+
+    <!-- DASHBOARD -->
+    <section class="view active" id="view-dashboard">
+      <div class="topbar">
+        <div><span class="eyebrow">Overview</span><h2>Dashboard</h2></div>
+      </div>
+
+      <div class="tag-grid" id="statGrid"></div>
+
+      <div class="dash-columns">
+        <div class="panel">
+          <div class="panel-head"><h3 id="dashOverdueTitle">Overdue &amp; upcoming returns</h3></div>
+          <div class="panel-body" id="dashOverdue"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><h3>Stock &amp; maintenance alerts</h3></div>
+          <div class="panel-body" id="dashAlerts"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- EQUIPMENT -->
+    <section class="view" id="view-equipment">
+      <div class="topbar">
+        <div><span class="eyebrow">Register</span><h2>Equipment</h2></div>
+        <button class="btn" id="addEquipmentBtn">+ Register equipment</button>
+      </div>
+
+      <div class="toolbar">
+        <input type="search" id="equipSearch" placeholder="Search name, code, serial…">
+        <select id="equipCategoryFilter"><option value="">All categories</option></select>
+        <select id="equipStatusFilter">
+          <option value="">All availability</option>
+          <option value="available">Has units available</option>
+          <option value="none">None currently available</option>
+        </select>
+        <div class="spacer"></div>
+        <button class="btn secondary small" id="manageCategoriesBtn">Manage categories</button>
+      </div>
+
+      <div class="ledger-wrap"><div id="equipmentTableWrap"></div></div>
+    </section>
+
+    <!-- CONSUMABLES -->
+    <section class="view" id="view-consumables">
+      <div class="topbar">
+        <div><span class="eyebrow">Register</span><h2>Consumables &amp; Materials</h2></div>
+        <button class="btn" id="addConsumableBtn">+ Add consumable</button>
+      </div>
+
+      <div class="toolbar">
+        <input type="search" id="consumableSearch" placeholder="Search consumables…">
+        <select id="consumableStockFilter">
+          <option value="">All stock levels</option>
+          <option value="low">Low stock only</option>
+        </select>
+      </div>
+
+      <div class="ledger-wrap"><div id="consumableTableWrap"></div></div>
+    </section>
+
+    <!-- BORROW & RETURN -->
+    <section class="view" id="view-borrow">
+      <div class="topbar">
+        <div><span class="eyebrow">Circulation</span><h2 id="borrowViewTitle">Borrow &amp; Return</h2></div>
+        <button class="btn" id="addBorrowBtn">+ New borrow request</button>
+      </div>
+
+      <div class="toolbar">
+        <input type="search" id="borrowSearch" placeholder="Search borrower or equipment…">
+        <select id="borrowStatusFilter">
+          <option value="">All statuses</option>
+          <option value="pending">Pending approval</option>
+          <option value="borrowed">Issued / borrowed</option>
+          <option value="overdue">Overdue</option>
+          <option value="returned">Returned</option>
+          <option value="rejected">Rejected</option>
+        </select>
+      </div>
+
+      <div class="ledger-wrap"><div id="borrowTableWrap"></div></div>
+    </section>
+
+    <!-- MAINTENANCE -->
+    <section class="view" id="view-maintenance">
+      <div class="topbar">
+        <div><span class="eyebrow">Servicing</span><h2>Maintenance &amp; Repair History</h2></div>
+        <button class="btn" id="addMaintenanceBtn">+ Log maintenance</button>
+      </div>
+
+      <div class="toolbar">
+        <input type="search" id="maintenanceSearch" placeholder="Search equipment or technician…">
+        <select id="maintenanceStatusFilter">
+          <option value="">All statuses</option>
+          <option value="reported">Reported</option>
+          <option value="scheduled">Scheduled</option>
+          <option value="completed">Completed</option>
+        </select>
+      </div>
+
+      <div class="ledger-wrap"><div id="maintenanceTableWrap"></div></div>
+    </section>
+
+    <!-- REPORTS -->
+    <section class="view" id="view-reports">
+      <div class="topbar">
+        <div><span class="eyebrow">Insights</span><h2>Inventory Reports</h2></div>
+        <button class="btn secondary" id="printReportBtn">Print / export view</button>
+      </div>
+      <div id="reportsWrap"></div>
+    </section>
+
+    <!-- USERS -->
+    <section class="view" id="view-users">
+      <div class="topbar">
+        <div><span class="eyebrow">Access control</span><h2>Users &amp; Access</h2></div>
+        <button class="btn" id="addUserBtn">+ Add user</button>
+      </div>
+      <div class="ledger-wrap"><div id="userTableWrap"></div></div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ================= MODAL (shared) ================= -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 id="modalTitle">Title</h3>
+      <button class="modal-close" id="modalClose" aria-label="Close">&times;</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-foot" id="modalFoot"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- ===== JS modules (load order matters — shared globals) ===== -->
+<!-- 1. Utilities & API wrapper -->
+<script src="js/api.js"></script>
+<!-- 2. In-memory state & role helpers -->
+<script src="js/state.js"></script>
+<!-- 3. Shared UI components -->
+<script src="js/modal.js"></script>
+<script src="js/nav.js"></script>
+<!-- 4. View modules -->
+<script src="js/views/dashboard.js"></script>
+<script src="js/views/equipment.js"></script>
+<script src="js/views/consumables.js"></script>
+<script src="js/views/borrow.js"></script>
+<script src="js/views/maintenance.js"></script>
+<script src="js/views/reports.js"></script>
+<script src="js/views/users.js"></script>
+<!-- 5. Bootstrap (runs after all views are defined) -->
+<script src="js/main.js"></script>
+
+</body>
+</html>
