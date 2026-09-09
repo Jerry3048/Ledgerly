@@ -15,14 +15,26 @@ const app = express();
 // ALLOWED_ORIGIN in .env controls which frontend origin(s) may call this API.
 // Supports a comma-separated list of origins, e.g.:
 //   ALLOWED_ORIGIN=http://localhost:3000,https://myapp.vercel.app
+// Origins are scheme + host + port only — no path or trailing slash.
+const normalizeOrigin = (o) => String(o || '').trim().replace(/\/+$/, '');
 const _rawOrigins = process.env.ALLOWED_ORIGIN || 'http://localhost:3000';
-const ALLOWED_ORIGINS = _rawOrigins.split(',').map(o => o.trim());
+const ALLOWED_ORIGINS = _rawOrigins.split(',').map(normalizeOrigin).filter(Boolean);
 
 app.use(
   cors({
     origin: (origin, callback) => {
       // Allow requests with no origin (e.g. curl, Postman, same-origin server calls)
-      if (!origin || ALLOWED_ORIGINS.includes(origin)) {
+      if (!origin) {
+        callback(null, true);
+        return;
+      }
+      // Browsers send Origin: "null" for file:// pages — reject with a hint.
+      // Serve frontend over http(s) instead of opening index.html directly.
+      if (origin === 'null') {
+        callback(new Error('CORS: file:// origin is not allowed. Serve the frontend over http(s).'));
+        return;
+      }
+      if (ALLOWED_ORIGINS.includes(normalizeOrigin(origin))) {
         callback(null, true);
       } else {
         callback(new Error(`CORS: origin '${origin}' is not allowed`));
