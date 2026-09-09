@@ -150,23 +150,6 @@ export default function Login() {
           </button>
         </form>
 
-        <div className="login-demo">
-          <strong>Demo credentials</strong>
-          <br />
-          Administrator — admin / admin123
-          <br />
-          Lab Officer — officer / officer123
-          <br />
-          Lecturer — lecturer / lecturer123
-          <br />
-          Student — student / student123
-          <br />
-          <em>
-            Staff (Admin/Officer) accounts can only be created by an
-            administrator from Users &amp; Access — self-registration is
-            limited to Student/Lecturer.
-          </em>
-        </div>
       </div>
       {showRegister && <RegisterModal onClose={() => setShowRegister(false)} />}
     </div>
