@@ -13,11 +13,14 @@ import MaintenanceView from './views/Maintenance';
 import ReportsView from './views/Reports';
 import UsersView from './views/Users';
 
-function NavItem({ id, view, setView, children, badge }) {
+function NavItem({ id, view, setView, onNavigate, children, badge }) {
   return (
     <button
       className={'nav-item' + (view === id ? ' active' : '')}
-      onClick={() => setView(id)}
+      onClick={() => {
+        setView(id);
+        if (onNavigate) onNavigate();
+      }}
     >
       <span className="tab-mark"></span>
       {children}
@@ -29,6 +32,7 @@ function NavItem({ id, view, setView, children, badge }) {
 export default function Shell() {
   const { me, setMe, isStaff, isAdmin, consumables, borrows } = useApp();
   const [view, setView] = useState('dashboard');
+  const [navOpen, setNavOpen] = useState(false);
   // Equipment "Request" button jumps to Borrow with the form pre-opened.
   const [borrowPreset, setBorrowPreset] = useState(null);
 
@@ -56,29 +60,73 @@ export default function Shell() {
 
   return (
     <div className="app-shell active">
-      <aside className="sidebar">
+      {/* Backdrop — click to slide the drawer back in */}
+      {navOpen && (
+        <div
+          className="sidebar-backdrop"
+          onClick={() => setNavOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+
+      <aside className={'sidebar' + (navOpen ? ' open' : '')}>
         <div className="sidebar-brand">
           <span className="hole"></span>
           <span>Lab Overall Ledger</span>
+          {/* X button — only visible on small screens, slides drawer back in */}
+          <button
+            className="sidebar-close"
+            onClick={() => setNavOpen(false)}
+            aria-label="Close menu"
+          >
+            &times;
+          </button>
         </div>
 
         <div className="nav-group-label">Overview</div>
-        <NavItem id="dashboard" view={view} setView={setView}>
+        <NavItem
+          id="dashboard"
+          view={view}
+          setView={setView}
+          onNavigate={() => setNavOpen(false)}
+        >
           Dashboard
         </NavItem>
 
         <div className="nav-group-label">Registers</div>
-        <NavItem id="equipment" view={view} setView={setView}>
+        <NavItem
+          id="equipment"
+          view={view}
+          setView={setView}
+          onNavigate={() => setNavOpen(false)}
+        >
           Equipment
         </NavItem>
-        <NavItem id="consumables" view={view} setView={setView} badge={lowStock}>
+        <NavItem
+          id="consumables"
+          view={view}
+          setView={setView}
+          badge={lowStock}
+          onNavigate={() => setNavOpen(false)}
+        >
           Consumables
         </NavItem>
-        <NavItem id="borrow" view={view} setView={setView} badge={overdue}>
+        <NavItem
+          id="borrow"
+          view={view}
+          setView={setView}
+          badge={overdue}
+          onNavigate={() => setNavOpen(false)}
+        >
           <span>{isStaff ? 'Borrow & Return' : 'My Borrow Requests'}</span>
         </NavItem>
         {isStaff && (
-          <NavItem id="maintenance" view={view} setView={setView}>
+          <NavItem
+            id="maintenance"
+            view={view}
+            setView={setView}
+            onNavigate={() => setNavOpen(false)}
+          >
             Maintenance
           </NavItem>
         )}
@@ -86,13 +134,23 @@ export default function Shell() {
         {isStaff && (
           <>
             <div className="nav-group-label">Insights</div>
-            <NavItem id="reports" view={view} setView={setView}>
+            <NavItem
+              id="reports"
+              view={view}
+              setView={setView}
+              onNavigate={() => setNavOpen(false)}
+            >
               Reports
             </NavItem>
           </>
         )}
         {isAdmin && (
-          <NavItem id="users" view={view} setView={setView}>
+          <NavItem
+            id="users"
+            view={view}
+            setView={setView}
+            onNavigate={() => setNavOpen(false)}
+          >
             Users &amp; Access
           </NavItem>
         )}
@@ -110,6 +168,23 @@ export default function Shell() {
       </aside>
 
       <main className="main">
+        {/* Hamburger bar — only visible on small screens.
+            Click the icon to slide the sidebar out / back in. */}
+        <div className="mobile-topbar">
+          <button
+            className="menu-btn"
+            onClick={() => setNavOpen((o) => !o)}
+            aria-label={navOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={navOpen}
+          >
+            <span className="menu-icon" aria-hidden="true">
+              <span></span>
+              <span></span>
+              <span></span>
+            </span>
+          </button>
+          <span className="mobile-brand">Lab Overall Ledger</span>
+        </div>
         <div className={'view' + (view === 'dashboard' ? ' active' : '')}>
           {view === 'dashboard' && <DashboardView />}
         </div>

@@ -420,13 +420,71 @@ table.ledger tbody tr:last-child td{border-bottom:none;}
 
 .helper-text{font-size:11.5px; color:var(--ink-soft); margin-top:4px;}
 
+/* ---- Hamburger drawer chrome (hidden on desktop) ---- */
+.mobile-topbar{display:none;}
+.sidebar-backdrop{display:none;}
+.sidebar-close{display:none;}
+.menu-btn{
+  display:inline-flex; align-items:center; justify-content:center;
+  width:40px; height:40px; padding:0;
+  border:1px solid var(--line-strong); border-radius:var(--radius);
+  background:var(--panel-raised);
+}
+.menu-btn:hover{background:var(--panel);}
+.menu-icon{display:flex; flex-direction:column; gap:5px; width:18px;}
+.menu-icon span{display:block; height:2px; background:var(--ink); border-radius:2px;}
+
 @media (max-width:800px){
   .app-shell.active{grid-template-columns:1fr;}
-  .sidebar{position:static; height:auto; flex-direction:row; flex-wrap:wrap; padding:14px;}
-  .sidebar-brand{border-bottom:none; padding:0 10px 0 0; margin:0;}
-  .nav-group-label{display:none;}
-  .nav-item{width:auto; margin:2px;}
-  .sidebar-footer{margin:0 0 0 auto; padding:0; border-top:none; display:flex; align-items:center; gap:10px;}
-  .sidebar-user{margin-bottom:0;}
+
+  /* Top-left hamburger bar — sidebar no longer sits at the top */
+  .mobile-topbar{
+    display:flex; align-items:center; gap:12px;
+    position:sticky; top:0; z-index:120;
+    margin:-20px -16px 16px; padding:10px 16px;
+    background:var(--panel-raised);
+    border-bottom:1px solid var(--line-strong);
+  }
+  .mobile-brand{
+    font-family:var(--font-display); font-weight:700; font-size:13px;
+    letter-spacing:0.04em; text-transform:uppercase;
+  }
+
+  /* Sidebar becomes a slide-in drawer from the left */
+  .sidebar{
+    position:fixed; top:0; left:0; bottom:0;
+    width:min(270px, 84vw); height:100dvh;
+    z-index:150;
+    flex-direction:column; flex-wrap:nowrap;
+    padding:20px 0;
+    transform:translateX(-105%);
+    transition:transform 0.25s ease;
+    box-shadow:8px 0 30px rgba(0,0,0,0.3);
+  }
+  .sidebar.open{transform:translateX(0);}
+  .sidebar-brand{border-bottom:1px solid rgba(236,239,230,0.15); padding:0 16px 18px; margin:0 0 6px;}
+  .nav-group-label{display:block;}
+  .nav-item{width:calc(100% - 16px); margin:0 8px;}
+  .sidebar-footer{
+    margin:auto 0 0; padding:16px 20px 0;
+    border-top:1px solid rgba(236,239,230,0.15);
+    display:block;
+  }
+  .sidebar-user{margin-bottom:10px;}
+  .sidebar-close{
+    display:inline-flex; align-items:center; justify-content:center;
+    margin-left:auto;
+    width:32px; height:32px;
+    border:1px solid rgba(236,239,230,0.3); border-radius:var(--radius);
+    background:transparent; color:var(--paper); font-size:22px; line-height:1;
+  }
+  .sidebar-close:hover{background:rgba(236,239,230,0.1);}
+
+  .sidebar-backdrop{
+    display:block;
+    position:fixed; inset:0; z-index:140;
+    background:rgba(20,26,24,0.5);
+  }
+
   .main{padding:20px 16px 50px;}
 }
