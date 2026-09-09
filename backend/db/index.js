@@ -29,4 +29,9 @@ pool.on('error', (err) => {
 
 const db = drizzle(pool, { schema });
 
+// Default export stays the Drizzle instance so existing
+// require('../db') call sites keep working; pool is attached
+// for session-store / tooling use: require('../db').pool
 module.exports = db;
+module.exports.db = db;
+module.exports.pool = pool;

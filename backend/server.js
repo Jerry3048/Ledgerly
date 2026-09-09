@@ -46,17 +46,43 @@ app.use(
 
 /* ---------------- core middleware ---------------- */
 app.use(express.json());
-app.use(express.static(path.join(__dirname, '..', 'frontend')));
+// React build output (Vite) when present, else the legacy static folder.
+const fs = require('fs');
+const DIST_DIR = path.join(__dirname, '..', 'frontend', 'dist');
+const STATIC_DIR = fs.existsSync(DIST_DIR)
+  ? DIST_DIR
+  : path.join(__dirname, '..', 'frontend');
+app.use(express.static(STATIC_DIR));
 
 /* ---------------- session ---------------- */
+// Behind Vercel / Render proxies the app must trust the proxy for
+// secure cookies (sameSite:'none', secure:true) to be set correctly.
+if (process.env.NODE_ENV === 'production') {
+  app.set('trust proxy', 1);
+}
 const SESSION_SECRET = process.env.SESSION_SECRET;
 if (!SESSION_SECRET && process.env.NODE_ENV === 'production') {
   // Bug fix #5: loudly fail in production if the secret has not been set
   console.error('FATAL: SESSION_SECRET environment variable is not set. Refusing to start in production mode.');
   process.exit(1);
 }
+// Serverless (Vercel) fix: MemoryStore does not survive across invocations —
+// each request can land on a fresh instance and users get logged out randomly.
+// Use Postgres-backed sessions when a pool is available; fall back to memory
+// only for local dev without a database.
+let sessionStore;
+try {
+  const pgSession = require('connect-pg-simple')(session);
+  const pool = require('./db').pool;
+  if (pool) {
+    sessionStore = new pgSession({ pool, createTableIfMissing: true });
+  }
+} catch (err) {
+  console.warn('Postgres session store unavailable, using MemoryStore:', err.message);
+}
 app.use(
   session({
+    store: sessionStore,
     name: 'labledger.sid',
     secret: SESSION_SECRET || 'labledger-dev-secret-change-in-production',
     resave: false,
@@ -84,7 +110,7 @@ app.use('/api/users', require('./routes/users'));
 
 /* ---------------- SPA fallback ---------------- */
 app.get('/{*splat}', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'frontend', 'index.html'));
+  res.sendFile(path.join(STATIC_DIR, 'index.html'));
 });
 
 /* ---------------- global error handler ---------------- */
@@ -95,5 +121,11 @@ app.use((err, req, res, _next) => {
 });
 
 /* ---------------- start ---------------- */
+// Vercel fix: export the app for serverless per-request invocation.
+// Only call .listen() when run directly (local dev / Render); Vercel
+// imports the app via api/index.js and must not open a port.
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`LabLedger running at http://localhost:${PORT}`));
+if (require.main === module) {
+  app.listen(PORT, () => console.log(`LabLedger running at http://localhost:${PORT}`));
+}
+module.exports = app;
