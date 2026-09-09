@@ -12,13 +12,22 @@ const path    = require('path');
 const app = express();
 
 /* ---------------- CORS ---------------- */
-// ALLOWED_ORIGIN in .env controls which frontend origin may call this API.
-// In local dev both frontend & backend are on the same origin so CORS is a
-// no-op, but it becomes essential when they are deployed to different hosts.
-const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN || 'http://localhost:3000';
+// ALLOWED_ORIGIN in .env controls which frontend origin(s) may call this API.
+// Supports a comma-separated list of origins, e.g.:
+//   ALLOWED_ORIGIN=http://localhost:3000,https://myapp.vercel.app
+const _rawOrigins = process.env.ALLOWED_ORIGIN || 'http://localhost:3000';
+const ALLOWED_ORIGINS = _rawOrigins.split(',').map(o => o.trim());
+
 app.use(
   cors({
-    origin: ALLOWED_ORIGIN,
+    origin: (origin, callback) => {
+      // Allow requests with no origin (e.g. curl, Postman, same-origin server calls)
+      if (!origin || ALLOWED_ORIGINS.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error(`CORS: origin '${origin}' is not allowed`));
+      }
+    },
     credentials: true, // allow the session cookie to be sent cross-origin
   })
 );
@@ -42,7 +51,11 @@ app.use(
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
-      sameSite: 'lax',
+      // Cross-origin deployments (frontend & backend on different domains) require
+      // sameSite:'none' + secure:true so the browser will send the cookie.
+      // In local dev (http) we fall back to 'lax' since 'none' requires HTTPS.
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+      secure: process.env.NODE_ENV === 'production',
       maxAge: 1000 * 60 * 60 * 8, // 8 hours
     },
   })
