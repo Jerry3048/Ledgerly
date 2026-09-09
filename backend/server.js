@@ -6,9 +6,22 @@ require('dotenv').config(); // must be first — routes/db read process.env
 
 const express = require('express');
 const session = require('express-session');
-const path = require('path');
+const cors    = require('cors');
+const path    = require('path');
 
 const app = express();
+
+/* ---------------- CORS ---------------- */
+// ALLOWED_ORIGIN in .env controls which frontend origin may call this API.
+// In local dev both frontend & backend are on the same origin so CORS is a
+// no-op, but it becomes essential when they are deployed to different hosts.
+const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN || 'http://localhost:3000';
+app.use(
+  cors({
+    origin: ALLOWED_ORIGIN,
+    credentials: true, // allow the session cookie to be sent cross-origin
+  })
+);
 
 /* ---------------- core middleware ---------------- */
 app.use(express.json());
@@ -36,13 +49,13 @@ app.use(
 );
 
 /* ---------------- API routes ---------------- */
-app.use('/api/auth',        require('./routes/auth'));
-app.use('/api/categories',  require('./routes/categories'));
-app.use('/api/equipment',   require('./routes/equipment'));
+app.use('/api/auth', require('./routes/auth'));
+app.use('/api/categories', require('./routes/categories'));
+app.use('/api/equipment', require('./routes/equipment'));
 app.use('/api/consumables', require('./routes/consumables'));
-app.use('/api/borrows',     require('./routes/borrows'));
+app.use('/api/borrows', require('./routes/borrows'));
 app.use('/api/maintenance', require('./routes/maintenance'));
-app.use('/api/users',       require('./routes/users'));
+app.use('/api/users', require('./routes/users'));
 
 /* ---------------- SPA fallback ---------------- */
 app.get('/{*splat}', (req, res) => {

@@ -33,15 +33,17 @@ function toast(msg) {
 /* ---------------- API fetch wrapper ---------------- */
 /**
  * Thin wrapper around fetch() that:
- *  - Prepends /api to all paths
+ *  - Prepends API_BASE_URL + /api to all paths (base URL set in config.js)
  *  - Sets Content-Type: application/json
  *  - JSON-encodes the body automatically
+ *  - Includes credentials so the session cookie is sent cross-origin
  *  - Throws on non-2xx responses with the server's error message
  */
 async function api(path, opts = {}) {
-  const res = await fetch('/api' + path, {
+  const res = await fetch(API_BASE_URL + '/api' + path, {
     method: opts.method || 'GET',
     headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',                // required for cross-origin session cookies
     body: opts.body ? JSON.stringify(opts.body) : undefined,
   });
   let data = null;

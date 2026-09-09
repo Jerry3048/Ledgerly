@@ -213,6 +213,8 @@
 <div class="toast" id="toast"></div>
 
 <!-- ===== JS modules (load order matters — shared globals) ===== -->
+<!-- 0. Frontend config — sets API_BASE_URL (edit config.js to change backend URL) -->
+<script src="config.js"></script>
 <!-- 1. Utilities & API wrapper -->
 <script src="js/api.js"></script>
 <!-- 2. In-memory state & role helpers -->

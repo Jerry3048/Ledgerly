@@ -4,21 +4,22 @@
   "description": "Lab Overall Ledger — laboratory inventory, borrow/return and maintenance register",
   "main": "server.js",
   "scripts": {
-    "start":       "node server.js",
-    "dev":         "node --watch server.js",
-    "db:push":     "drizzle-kit push",
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "db:push": "drizzle-kit push",
     "db:generate": "drizzle-kit generate",
-    "db:migrate":  "drizzle-kit migrate",
-    "db:seed":     "node db/seed.js",
-    "db:studio":   "drizzle-kit studio"
+    "db:migrate": "drizzle-kit migrate",
+    "db:seed": "node db/seed.js",
+    "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
-    "bcryptjs":       "^2.4.3",
-    "dotenv":         "^16.4.5",
-    "drizzle-orm":    "^0.36.4",
-    "express":        "^4.19.2",
-    "express-session":"^1.18.0",
-    "pg":             "^8.13.1"
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.6",
+    "dotenv": "^16.4.5",
+    "drizzle-orm": "^0.36.4",
+    "express": "^4.19.2",
+    "express-session": "^1.18.0",
+    "pg": "^8.13.1"
   },
   "devDependencies": {
     "drizzle-kit": "^0.28.1"
