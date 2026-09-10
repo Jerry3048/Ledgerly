@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import { api } from '../api';
 import { useApp } from '../store';
 import { EmptyState, Modal, Stamp } from '../components';
+import CsvImportModal from '../CsvImport';
+import { downloadCSV, toCSV, EQUIPMENT_TEMPLATE_COLS } from '../csv';
 
 function nextEquipCode(equipment) {
   return 'EQ-' + String(equipment.length + 1).padStart(4, '0');
@@ -231,6 +233,7 @@ export default function EquipmentView({ onRequest }) {
   const [avail, setAvail] = useState('');
   const [editing, setEditing] = useState(undefined);
   const [showCats, setShowCats] = useState(false);
+  const [showImport, setShowImport] = useState(false);
 
   const rows = equipment.filter((e) => {
     const matchQ =
@@ -273,9 +276,40 @@ export default function EquipmentView({ onRequest }) {
           <h2>Equipment</h2>
         </div>
         {isStaff && (
-          <button className="btn" onClick={() => setEditing(null)}>
-            + Register equipment
-          </button>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+            <button className="btn secondary" onClick={() => setShowImport(true)}>
+              Import CSV
+            </button>
+            <button
+              className="btn secondary"
+              onClick={() =>
+                downloadCSV(
+                  'equipment-export.csv',
+                  toCSV(
+                    rows.map((e) => ({
+                      name: e.name || '',
+                      category: catName(e.category_id) === '—' ? '' : catName(e.category_id),
+                      code: e.code || '',
+                      serial: e.serial || '',
+                      model: e.model || '',
+                      supplier: e.supplier || '',
+                      purchase_date: e.purchase_date || '',
+                      location: e.location || '',
+                      condition_note: e.condition_note || '',
+                      notes: e.notes || '',
+                      qty_total: e.qty_total ?? 0,
+                    })),
+                    EQUIPMENT_TEMPLATE_COLS
+                  )
+                )
+              }
+            >
+              Export CSV
+            </button>
+            <button className="btn" onClick={() => setEditing(null)}>
+              + Register equipment
+            </button>
+          </div>
         )}
       </div>
 
@@ -402,6 +436,32 @@ export default function EquipmentView({ onRequest }) {
         />
       )}
       {showCats && <CategoryManager onClose={() => setShowCats(false)} />}
+      {showImport && (
+        <CsvImportModal
+          title="Import equipment from CSV"
+          endpoint="/equipment/bulk"
+          templateCols={EQUIPMENT_TEMPLATE_COLS}
+          templateFilename="equipment-template.csv"
+          sampleRow={{
+            name: 'Binocular Microscope',
+            category: 'Optical Instruments',
+            code: 'EQ-0001',
+            serial: 'SN-MC-2201',
+            model: 'Olympus CX23',
+            supplier: 'ScienceMart Ltd',
+            purchase_date: '2023-09-12',
+            location: 'Lab A — Bench 3',
+            condition_note: 'Good',
+            notes: '',
+            qty_total: '8',
+          }}
+          onClose={() => setShowImport(false)}
+          onDone={async () => {
+            await reload(['equipment', 'categories']);
+            toast('Equipment import finished.');
+          }}
+        />
+      )}
     </>
   );
 }
