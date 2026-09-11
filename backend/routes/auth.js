@@ -56,6 +56,29 @@ router.get('/me', async (req, res, next) => {
   } catch (err) { next(err); }
 });
 
+// Self-service password reset from the login screen (no email configured,
+// so identity is verified with username + full name instead of a reset link).
+router.post('/forgot-password', async (req, res, next) => {
+  try {
+    const { username, name, newPassword } = req.body || {};
+    if (!username?.trim() || !name?.trim() || !newPassword) {
+      return res.status(400).json({ error: 'Username, full name and new password are required.' });
+    }
+    const [user] = await db.select().from(users).where(eq(users.username, username.trim()));
+    if (!user) return res.status(404).json({ error: 'No account found with that username.' });
+    if (user.name.trim().toLowerCase() !== name.trim().toLowerCase()) {
+      return res.status(400).json({ error: 'Full name does not match our records for that username.' });
+    }
+    const pwError = validatePassword(newPassword);
+    if (pwError) return res.status(400).json({ error: pwError });
+
+    await db.update(users)
+      .set({ password_hash: bcrypt.hashSync(newPassword, 10) })
+      .where(eq(users.id, user.id));
+    res.json({ ok: true });
+  } catch (err) { next(err); }
+});
+
 // Logged-in user changes their own password — requires current password.
 router.post('/change-password', requireAuth, async (req, res, next) => {
   try {

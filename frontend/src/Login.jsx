@@ -79,12 +79,105 @@ function RegisterModal({ onClose }) {
   );
 }
 
+function ForgotPasswordModal({ onClose, prefillUsername }) {
+  const { toast } = useApp();
+  const [username, setUsername] = useState(prefillUsername || '');
+  const [name, setName] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirm, setConfirm] = useState('');
+  const [error, setError] = useState('');
+
+  const submit = async () => {
+    if (!username.trim() || !name.trim() || !newPassword) {
+      setError('Username, full name and new password are required.');
+      return;
+    }
+    if (newPassword !== confirm) {
+      setError('New passwords do not match.');
+      return;
+    }
+    setError('');
+    try {
+      await api('/auth/forgot-password', {
+        method: 'POST',
+        body: { username: username.trim(), name: name.trim(), newPassword },
+      });
+      onClose();
+      toast('Password reset. You can now sign in with the new password.');
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  return (
+    <Modal
+      title="Forgot password"
+      onClose={onClose}
+      footer={
+        <>
+          <button className="btn secondary" onClick={onClose}>
+            Cancel
+          </button>
+          <button className="btn" onClick={submit}>
+            Reset password
+          </button>
+        </>
+      }
+    >
+      <p className="cell-sub" style={{ marginBottom: 14 }}>
+        Enter your username and full name to verify your identity, then choose
+        a new password. If you still can't get in, ask an administrator to
+        reset it from Users &amp; Access.
+      </p>
+      <div className="form-grid">
+        <div className="field">
+          <label>Username</label>
+          <input
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            autoComplete="username"
+          />
+        </div>
+        <div className="field">
+          <label>Full name</label>
+          <input
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="As registered"
+          />
+        </div>
+        <div className="field">
+          <label>New password</label>
+          <input
+            type="password"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+            autoComplete="new-password"
+            placeholder="Minimum 6 characters"
+          />
+        </div>
+        <div className="field">
+          <label>Confirm new password</label>
+          <input
+            type="password"
+            value={confirm}
+            onChange={(e) => setConfirm(e.target.value)}
+            autoComplete="new-password"
+          />
+        </div>
+      </div>
+      {error && <p className="form-error">{error}</p>}
+    </Modal>
+  );
+}
+
 export default function Login() {
-  const { setMe, loadAll } = useApp();
+  const { setMe, loadAll, toast } = useApp();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [showRegister, setShowRegister] = useState(false);
+  const [showForgot, setShowForgot] = useState(false);
 
   const submit = async (e) => {
     e.preventDefault();
@@ -140,6 +233,15 @@ export default function Login() {
           <button type="submit" className="btn-primary">
             Sign in to register
           </button>
+          <div style={{ textAlign: 'center', marginTop: 10 }}>
+            <button
+              type="button"
+              className="link-btn"
+              onClick={() => setShowForgot(true)}
+            >
+              Forgot password?
+            </button>
+          </div>
           <button
             type="button"
             className="btn secondary"
@@ -166,6 +268,12 @@ export default function Login() {
 
       </div>
       {showRegister && <RegisterModal onClose={() => setShowRegister(false)} />}
+      {showForgot && (
+        <ForgotPasswordModal
+          prefillUsername={username}
+          onClose={() => setShowForgot(false)}
+        />
+      )}
     </div>
   );
 }

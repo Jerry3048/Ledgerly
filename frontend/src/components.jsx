@@ -3,7 +3,7 @@
    of js/modal.js helpers + ledger CSS motifs: hole, stamp,
    empty-state, tag-card, alert-row).
    ========================================================= */
-import React from 'react';
+import React, { useEffect } from 'react';
 
 /** Brand mark for "Legerly" — ledger-book icon used next to the name. */
 export function BrandIcon() {
@@ -27,13 +27,44 @@ export function BrandIcon() {
   );
 }
 
-/** Shared modal shell — .modal-overlay/.modal/.modal-head/.modal-body/.modal-foot */
+/** Shared modal shell — .modal-overlay/.modal/.modal-head/.modal-body/.modal-foot
+ *  Locks background scroll while open (restored on close, nesting-safe)
+ *  and closes on Escape. */
+let openModals = 0;
+
 export function Modal({ title, onClose, children, footer }) {
+  useEffect(() => {
+    // Lock background scroll — count nesting so stacked modals don't
+    // re-enable scroll until the last one closes.
+    openModals += 1;
+    const prevBody = document.body.style.overflow;
+    const prevHtml = document.documentElement.style.overflow;
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
+
+    const onKey = (e) => {
+      if (e.key === 'Escape') onClose();
+    };
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      openModals = Math.max(0, openModals - 1);
+      if (openModals === 0) {
+        document.body.style.overflow = prevBody;
+        document.documentElement.style.overflow = prevHtml;
+      }
+    };
+  }, [onClose]);
+
   return (
     <div
       className="modal-overlay active"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
+      }}
+      onWheel={(e) => {
+        // Keep wheel scrolling inside the overlay — don't leak to the page.
+        e.stopPropagation();
       }}
     >
       <div className="modal">
