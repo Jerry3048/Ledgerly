@@ -73,6 +73,25 @@ router.put('/:id', requireAuth, requireAdmin, async (req, res, next) => {
   } catch (err) { next(err); }
 });
 
+router.post('/:id/reset-password', requireAuth, requireAdmin, async (req, res, next) => {
+  try {
+    const [rec] = await db.select().from(users).where(eq(users.id, Number(req.params.id)));
+    if (!rec) return res.status(404).json({ error: 'User not found.' });
+
+    const { newPassword } = req.body || {};
+    if (!newPassword?.trim()) return res.status(400).json({ error: 'New password is required.' });
+    const pwError = validatePassword(newPassword.trim());
+    if (pwError) return res.status(400).json({ error: pwError });
+
+    await db.update(users)
+      .set({ password_hash: bcrypt.hashSync(newPassword.trim(), 10) })
+      .where(eq(users.id, rec.id));
+
+    const [updated] = await db.select(SELECT_PUBLIC).from(users).where(eq(users.id, rec.id));
+    res.json(updated);
+  } catch (err) { next(err); }
+});
+
 router.delete('/:id', requireAuth, requireAdmin, async (req, res, next) => {
   try {
     if (Number(req.params.id) === req.user.id) return res.status(400).json({ error: "You can't delete the account you're signed in with." });

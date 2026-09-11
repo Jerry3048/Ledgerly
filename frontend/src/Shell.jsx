@@ -5,7 +5,7 @@
 import React, { useEffect, useState } from 'react';
 import { api, isOverdue } from './api';
 import { roleLabels, useApp } from './store';
-import { BrandIcon } from './components';
+import { BrandIcon, Modal } from './components';
 import DashboardView from './views/Dashboard';
 import EquipmentView from './views/Equipment';
 import ConsumablesView from './views/Consumables';
@@ -30,10 +30,90 @@ function NavItem({ id, view, setView, onNavigate, children, badge }) {
   );
 }
 
+function ChangePasswordModal({ onClose }) {
+  const { toast } = useApp();
+  const [currentPassword, setCurrentPassword] = React.useState('');
+  const [newPassword, setNewPassword] = React.useState('');
+  const [confirm, setConfirm] = React.useState('');
+  const [error, setError] = React.useState('');
+
+  const submit = async () => {
+    if (!currentPassword || !newPassword) {
+      setError('Enter your current password and a new password.');
+      return;
+    }
+    if (newPassword !== confirm) {
+      setError('New passwords do not match.');
+      return;
+    }
+    setError('');
+    try {
+      await api('/auth/change-password', {
+        method: 'POST',
+        body: { currentPassword, newPassword },
+      });
+      onClose();
+      toast('Password changed.');
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  return (
+    <Modal
+      title="Change password"
+      onClose={onClose}
+      footer={
+        <>
+          <button className="btn secondary" onClick={onClose}>
+            Cancel
+          </button>
+          <button className="btn" onClick={submit}>
+            Change password
+          </button>
+        </>
+      }
+    >
+      <div className="form-grid">
+        <div className="field full">
+          <label>Current password</label>
+          <input
+            type="password"
+            autoComplete="current-password"
+            value={currentPassword}
+            onChange={(e) => setCurrentPassword(e.target.value)}
+          />
+        </div>
+        <div className="field">
+          <label>New password</label>
+          <input
+            type="password"
+            autoComplete="new-password"
+            placeholder="Minimum 6 characters"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+          />
+        </div>
+        <div className="field">
+          <label>Confirm new password</label>
+          <input
+            type="password"
+            autoComplete="new-password"
+            value={confirm}
+            onChange={(e) => setConfirm(e.target.value)}
+          />
+        </div>
+      </div>
+      {error && <p className="form-error">{error}</p>}
+    </Modal>
+  );
+}
+
 export default function Shell() {
   const { me, setMe, isStaff, isAdmin, consumables, borrows } = useApp();
   const [view, setView] = useState('dashboard');
   const [navOpen, setNavOpen] = useState(false);
+  const [showChangePw, setShowChangePw] = useState(false);
   // Equipment "Request" button jumps to Borrow with the form pre-opened.
   const [borrowPreset, setBorrowPreset] = useState(null);
 
@@ -162,6 +242,9 @@ export default function Shell() {
             <br />
             <span className="role-pill">{roleLabels[me.role] || me.role}</span>
           </div>
+          <button className="logout-btn" onClick={() => setShowChangePw(true)}>
+            Change password
+          </button>
           <button className="logout-btn" onClick={logout}>
             Sign out
           </button>
@@ -224,6 +307,7 @@ export default function Shell() {
           </div>
         )}
       </main>
+      {showChangePw && <ChangePasswordModal onClose={() => setShowChangePw(false)} />}
     </div>
   );
 }

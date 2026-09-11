@@ -83,9 +83,80 @@ function UserModal({ rec, onClose, onSaved }) {
   );
 }
 
+function ResetPasswordModal({ rec, onClose, onSaved }) {
+  const [newPassword, setNewPassword] = useState('');
+  const [confirm, setConfirm] = useState('');
+  const [error, setError] = useState('');
+
+  const submit = async () => {
+    if (!newPassword.trim()) {
+      setError('Enter a new password.');
+      return;
+    }
+    if (newPassword.trim() !== confirm.trim()) {
+      setError('Passwords do not match.');
+      return;
+    }
+    try {
+      await api('/users/' + rec.id + '/reset-password', {
+        method: 'POST',
+        body: { newPassword: newPassword.trim() },
+      });
+      onSaved();
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  return (
+    <Modal
+      title={'Reset password — ' + rec.username}
+      onClose={onClose}
+      footer={
+        <>
+          <button className="btn secondary" onClick={onClose}>
+            Cancel
+          </button>
+          <button className="btn" onClick={submit}>
+            Reset password
+          </button>
+        </>
+      }
+    >
+      <p className="cell-sub" style={{ marginBottom: 14 }}>
+        Set a new password for <strong>{rec.name}</strong>. They can change it
+        again themselves from Change password.
+      </p>
+      <div className="form-grid">
+        <div className="field">
+          <label>New password</label>
+          <input
+            type="password"
+            autoComplete="new-password"
+            placeholder="Minimum 6 characters"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+          />
+        </div>
+        <div className="field">
+          <label>Confirm new password</label>
+          <input
+            type="password"
+            autoComplete="new-password"
+            value={confirm}
+            onChange={(e) => setConfirm(e.target.value)}
+          />
+        </div>
+      </div>
+      {error && <p className="form-error">{error}</p>}
+    </Modal>
+  );
+}
+
 export default function UsersView() {
   const { me, users, isAdmin, reload, toast } = useApp();
   const [editing, setEditing] = useState(undefined);
+  const [resetting, setResetting] = useState(null);
 
   if (!isAdmin) {
     return (
@@ -110,6 +181,12 @@ export default function UsersView() {
     await reload(['users']);
     setEditing(undefined);
     toast('User saved.');
+  };
+
+  const resetSaved = async () => {
+    await reload(['users']);
+    setResetting(null);
+    toast('Password reset.');
   };
 
   const del = async (u) => {
@@ -161,6 +238,9 @@ export default function UsersView() {
                     <button className="icon-btn" onClick={() => setEditing(u)}>
                       Edit
                     </button>
+                    <button className="icon-btn" onClick={() => setResetting(u)}>
+                      Reset
+                    </button>
                     <button
                       className="icon-btn danger"
                       onClick={() => del(u)}
@@ -180,6 +260,13 @@ export default function UsersView() {
           rec={editing}
           onClose={() => setEditing(undefined)}
           onSaved={saved}
+        />
+      )}
+      {resetting && (
+        <ResetPasswordModal
+          rec={resetting}
+          onClose={() => setResetting(null)}
+          onSaved={resetSaved}
         />
       )}
     </>
