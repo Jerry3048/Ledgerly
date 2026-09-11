@@ -3,7 +3,7 @@
    of js/modal.js helpers + ledger CSS motifs: hole, stamp,
    empty-state, tag-card, alert-row).
    ========================================================= */
-import React from 'react';
+import React, { useEffect } from 'react';
 
 /** Brand mark for "Legerly" — ledger-book icon used next to the name. */
 export function BrandIcon() {
@@ -27,13 +27,44 @@ export function BrandIcon() {
   );
 }
 
-/** Shared modal shell — .modal-overlay/.modal/.modal-head/.modal-body/.modal-foot */
+/** Body scroll lock shared by modals and the sidebar drawer.
+ *  Nesting-safe: the page stays locked until every holder releases.
+ *  Usage: `useEffect(() => lockBodyScroll(), [])` or
+ *  `useEffect(() => { if (open) return lockBodyScroll(); }, [open])`
+ *  (the returned function is the cleanup). */
+let bodyLocks = 0;
+export function lockBodyScroll() {
+  bodyLocks += 1;
+  if (bodyLocks === 1) {
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
+  }
+  let released = false;
+  return () => {
+    if (released) return;
+    released = true;
+    bodyLocks = Math.max(0, bodyLocks - 1);
+    if (bodyLocks === 0) {
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
+    }
+  };
+}
+
+/** Shared modal shell — .modal-overlay/.modal/.modal-head/.modal-body/.modal-foot
+ *  Locks background scroll while open so the page behind can't move. */
 export function Modal({ title, onClose, children, footer }) {
+  useEffect(() => lockBodyScroll(), []);
+
   return (
     <div
       className="modal-overlay active"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
+      }}
+      onWheel={(e) => {
+        // Keep wheel scrolling inside the overlay — don't leak to the page.
+        e.stopPropagation();
       }}
     >
       <div className="modal">

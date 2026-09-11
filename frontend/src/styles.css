@@ -399,6 +399,7 @@ table.ledger tbody tr:last-child td{border-bottom:none;}
 .modal-overlay{
   display:none; position:fixed; inset:0; background:rgba(20,26,24,0.5);
   align-items:flex-start; justify-content:center; padding:40px 16px; overflow-y:auto; z-index:100;
+  overscroll-behavior:contain; -webkit-overflow-scrolling:touch;
 }
 .modal-overlay.active{display:flex;}
 .modal{

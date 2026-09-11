@@ -5,7 +5,7 @@
 import React, { useEffect, useState } from 'react';
 import { api, isOverdue } from './api';
 import { roleLabels, useApp } from './store';
-import { BrandIcon, Modal } from './components';
+import { BrandIcon, Modal, lockBodyScroll } from './components';
 import DashboardView from './views/Dashboard';
 import EquipmentView from './views/Equipment';
 import ConsumablesView from './views/Consumables';
@@ -128,6 +128,12 @@ export default function Shell() {
     setBorrowPreset(String(id));
     setView('borrow');
   };
+
+  // Lock the page behind the sidebar drawer while it's slid out (mobile).
+  useEffect(() => {
+    if (!navOpen) return;
+    return lockBodyScroll();
+  }, [navOpen]);
 
   // Keep document title in sync with the active view.
   useEffect(() => {
