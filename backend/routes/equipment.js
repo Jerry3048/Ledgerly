@@ -84,6 +84,14 @@ router.delete('/:id', requireAuth, requireAdmin, async (req, res, next) => {
 // Bulk import — accepts JSON rows parsed from a CSV file on the client.
 // Body: { items: [{ name, category, category_id, code, serial, model,
 //   supplier, purchase_date, location, condition_note, notes, qty_total }] }
+// Aliases accepted (so a raw physical-count sheet works as-is):
+//   name <- items | item | equipment | equipment_name
+//   qty_total <- quantity | qty | total | stock
+//   condition_note <- condition | status
+//   category <- category_name | type
+// A status/condition of faulty|damaged|fault|broken|bad|not working
+// imports the row with qty_damaged = qty_total (0 available) instead of
+// silently marking faulty units as available.
 // Missing categories are created automatically. Returns per-row errors.
 router.post('/bulk', requireAuth, requireStaff, async (req, res, next) => {
   try {
@@ -118,30 +126,54 @@ router.post('/bulk', requireAuth, requireStaff, async (req, res, next) => {
 
     let imported = 0;
     const errors = [];
+    const pick = (obj, ...keys) => {
+      for (const k of keys) {
+        if (obj[k] != null && String(obj[k]).trim() !== '') return obj[k];
+      }
+      return undefined;
+    };
+    const isFaulty = (v) => /faulty|damaged|fault|broken|bad|not working|dead|spoilt/i.test(String(v || ''));
     for (let i = 0; i < items.length; i++) {
       const b = items[i] || {};
       const rowNum = i + 2; // +1 header, +1 for 1-based
       try {
-        if (!b.name?.toString().trim()) throw new Error('name is required');
-        const qty = b.qty_total == null || b.qty_total === '' ? 0 : Number(b.qty_total);
-        if (!Number.isFinite(qty) || qty < 0) throw new Error('qty_total must be 0 or more');
-        const category_id = b.category_id != null && b.category_id !== ''
+        const nameVal = pick(b, 'name', 'items', 'item', 'equipment', 'equipment_name');
+        if (!nameVal?.toString().trim()) throw new Error('name (or Items) is required');
+        const qtyRaw = pick(b, 'qty_total', 'quantity', 'qty', 'total', 'stock');
+        const qty = qtyRaw == null || qtyRaw === '' ? 0 : Number(qtyRaw);
+        if (!Number.isFinite(qty) || qty < 0) throw new Error('qty_total (or Quantity) must be 0 or more');
+        const qtyTotal = Math.floor(qty);
+        const category_id = b.category_id != null && String(b.category_id).trim() !== ''
           ? await resolveCategory(b.category_id)
-          : await resolveCategory(b.category);
+          : await resolveCategory(pick(b, 'category', 'category_name', 'type'));
+        const statusVal = pick(b, 'status', 'condition', 'condition_note');
+        const conditionNote = statusVal?.toString().trim() || b.condition_note?.toString().trim() || null;
+        // Faulty rows: quarantine the full quantity as damaged so
+        // qty_available = 0 instead of showing faulty stock as borrowable.
+        const explicitDamaged = pick(b, 'qty_damaged', 'damaged', 'damaged_qty', 'faulty_qty');
+        let qtyDamaged = 0;
+        if (explicitDamaged != null && String(explicitDamaged).trim() !== '') {
+          qtyDamaged = Math.floor(Number(explicitDamaged));
+          if (!Number.isFinite(qtyDamaged) || qtyDamaged < 0 || qtyDamaged > qtyTotal) {
+            throw new Error('qty_damaged must be between 0 and qty_total');
+          }
+        } else if (isFaulty(statusVal)) {
+          qtyDamaged = qtyTotal;
+        }
         await db.insert(equipment).values({
-          name:           b.name.toString().trim(),
+          name:           nameVal.toString().trim(),
           category_id,
-          code:           b.code?.toString().trim() || null,
+          code:           pick(b, 'code', 'item_code', 'equipment_code')?.toString().trim() || null,
           serial:         b.serial?.toString().trim() || null,
           model:          b.model?.toString().trim() || null,
           supplier:       b.supplier?.toString().trim() || null,
-          purchase_date:  b.purchase_date?.toString().trim() || null,
-          location:       b.location?.toString().trim() || null,
-          condition_note: b.condition_note?.toString().trim() || null,
+          purchase_date:  pick(b, 'purchase_date', 'purchasedate', 'date')?.toString().trim() || null,
+          location:       pick(b, 'location', 'lab', 'room', 'office')?.toString().trim() || null,
+          condition_note: conditionNote,
           notes:          b.notes?.toString().trim() || null,
-          qty_total:      Math.floor(qty),
+          qty_total:      qtyTotal,
           qty_borrowed:   0,
-          qty_damaged:    0,
+          qty_damaged:    qtyDamaged,
           qty_maintenance: 0,
         });
         imported++;

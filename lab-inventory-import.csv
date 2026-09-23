@@ -1,0 +1,63 @@
+﻿name,category,code,serial,model,supplier,purchase_date,location,condition_note,notes,qty_total
+Type C Charger,Power & Electrical,EQ-0001,,,,,Microprocessor Lab,Active,Physical verification: none borrowed; all present at count.,5
+Arduino Kit,Embedded & Trainer Kits,EQ-0002,,,,,Microprocessor Lab,Active,,6
+Breadboard,"Test, Tools & Components",EQ-0003,,,,,Microprocessor Lab,Active,,9
+Multimeter,"Test, Tools & Components",EQ-0004,,,,,Microprocessor Lab,Active,,10
+GA to HDMI Conerter,"Cables, Storage & Accessories",EQ-0005,,,,,Microprocessor Lab,Active,,9
+RFID Card,"Cables, Storage & Accessories",EQ-0006,,,,,Microprocessor Lab,Active,,10
+Raspberry PI4 and 4 Casting,Embedded & Trainer Kits,EQ-0007,,,,,Microprocessor Lab,Active,,5
+Card Reader,"Cables, Storage & Accessories",EQ-0008,,,,,Microprocessor Lab,Active,,5
+Memory Cards,"Cables, Storage & Accessories",EQ-0009,,,,,Microprocessor Lab,Active,,5
+HDMI Cables,"Cables, Storage & Accessories",EQ-0010,,,,,Microprocessor Lab,Active,,5
+Resistor Kit Box,"Test, Tools & Components",EQ-0011,,,,,Microprocessor Lab,Active,,1
+Sound Kit Box,"Test, Tools & Components",EQ-0012,,,,,Microprocessor Lab,Active,,1
+Power Kit Box,"Test, Tools & Components",EQ-0013,,,,,Microprocessor Lab,Active,,1
+Chips Kit Box,Embedded & Trainer Kits,EQ-0014,,,,,Microprocessor Lab,Active,,1
+Speaker Stand,Input / Output & Peripherals,EQ-0015,,,,,Microprocessor Lab,Active,,1
+Hardware tools Box,"Test, Tools & Components",EQ-0016,,,,,Microprocessor Lab,Active,,1
+Boards Kit Box,Embedded & Trainer Kits,EQ-0017,,,,,Microprocessor Lab,Active,,1
+Damaged Printers,Input / Output & Peripherals,EQ-0018,,,,,Work Station,Faulty,Physical count: faulty - requires assessment.,7
+Suite Stand-Hanger,"Furniture, Safety & Office",EQ-0019,,,,,Olaitan Office,Active,,1
+All in One PC,Computer Systems,EQ-0020,,,,,Microprocessor Lab,Faulty,Physical count: faulty - requires assessment.,30
+UPS,Power & Electrical,EQ-0021,,,,,Microprocessor Lab,Faulty,Physical count: faulty - requires assessment.,6
+CPU,Computer Systems,EQ-0022,,,,,Microprocessor Lab,Faulty,Physical count: faulty - requires assessment.,41
+Keyboards,Input / Output & Peripherals,EQ-0023,,,,,Microprocessor Lab,Faulty,Physical count: faulty - requires assessment.,5
+Stabilizer,Power & Electrical,EQ-0024,,,,,Microprocessor Lab,Faulty,Physical count: faulty - requires assessment.,3
+ALTERA DE2 Board,Embedded & Trainer Kits,EQ-0025,,,,,Digital Lab,Faulty,Physical count: faulty - requires assessment.,10
+HDMI Cables,"Cables, Storage & Accessories",EQ-0026,,,,,Microprocessor Lab,Faulty,Physical count: faulty - requires assessment.,16
+Mouse,Input / Output & Peripherals,EQ-0027,,,,,Microprocessor Lab,Faulty,Physical count: faulty - requires assessment.,9
+Adapter,Power & Electrical,EQ-0028,,,,,Microprocessor Lab,Faulty,Physical count: faulty - requires assessment.,17
+All in One PC,Computer Systems,EQ-0029,,,,,Microprocessor Lab,Active,,16
+Desktop PC,Computer Systems,EQ-0030,,,,,Microprocessor Lab,Active,,22
+UPS,Power & Electrical,EQ-0031,,,,,Microprocessor Lab,Active,,12
+Stabilizer,Power & Electrical,EQ-0032,,,,,Microprocessor Lab,Active,,16
+Extension Box,Power & Electrical,EQ-0033,,,,,Microprocessor Lab,Active,,14
+ALTERA DE2 Board,Embedded & Trainer Kits,EQ-0034,,,,,Microprocessor Lab,Active,,30
+Microprocessor Trainer Kit,Embedded & Trainer Kits,EQ-0035,,,,,Microprocessor Lab,Active,,1
+Logic Tutor,Embedded & Trainer Kits,EQ-0036,,,,,Microprocessor Lab,Active,,3
+Raspberry PI,Embedded & Trainer Kits,EQ-0037,,,,,Microprocessor Lab,Active,,4
+PI Casting,Embedded & Trainer Kits,EQ-0038,,,,,Microprocessor Lab,Active,,5
+All in One PC,Computer Systems,EQ-0039,,,,,Digital Lab,Active,,11
+UPS,Power & Electrical,EQ-0040,,,,,Digital Lab,Faulty,Physical count: faulty - requires assessment.,8
+Stabilizer,Power & Electrical,EQ-0041,,,,,Digital Lab,Active,,8
+Extension Box,Power & Electrical,EQ-0042,,,,,Digital Lab,Active,,5
+ALTERA DE2 Board,Embedded & Trainer Kits,EQ-0043,,,,,Digital Lab,Faulty,Physical count: faulty - requires assessment.,10
+First Aid Kit,"Furniture, Safety & Office",EQ-0044,,,,,Digital Lab,Active,,2
+Mouse,Input / Output & Peripherals,EQ-0045,,,,,Digital Lab,Active,,9
+Printer Cables,"Cables, Storage & Accessories",EQ-0046,,,,,Digital Lab,Active,,3
+Keyboards,Input / Output & Peripherals,EQ-0047,,,,,Digital Lab,Active,,11
+Tables,"Furniture, Safety & Office",EQ-0048,,,,,Digital Lab,Active,,10
+Chairs,"Furniture, Safety & Office",EQ-0049,,,,,Digital Lab,Active,,12
+Wooden Stools,"Furniture, Safety & Office",EQ-0050,,,,,Digital Lab,Active,,7
+Fire Extinguisher,"Furniture, Safety & Office",EQ-0051,,,,,Digital Lab,Active,,2
+Standing AC,"Furniture, Safety & Office",EQ-0052,,,,,Digital Lab,Active,,1
+White Board,Input / Output & Peripherals,EQ-0053,,,,,Digital Lab,Active,,1
+Network Cable,"Cables, Storage & Accessories",EQ-0054,,,,,Microprocessor Lab,Faulty,Physical count: faulty - requires assessment.,7
+All in One PC,Computer Systems,EQ-0055,,,,,Digital Lab,Faulty,Physical count: faulty - requires assessment.,10
+UPS,Power & Electrical,EQ-0056,,,,,Digital Lab,Faulty,Physical count: faulty - requires assessment.,8
+CPU,Computer Systems,EQ-0057,,,,,Digital Lab,Faulty,Physical count: faulty - requires assessment.,24
+Keyboards,Input / Output & Peripherals,EQ-0058,,,,,Digital Lab,Faulty,Physical count: faulty - requires assessment.,12
+Speaker,Input / Output & Peripherals,EQ-0059,,,,,Digital Lab,Faulty,Physical count: faulty - requires assessment.,3
+Projector,Input / Output & Peripherals,EQ-0060,,,,,Digital Lab,Faulty,Physical count: faulty - requires assessment.,4
+Monitors,Computer Systems,EQ-0061,,,,,Digital Lab,Faulty,Physical count: faulty - requires assessment.,12
+Chairs,"Furniture, Safety & Office",EQ-0062,,,,,Digital Lab,Faulty,Physical count: faulty - requires assessment.,3

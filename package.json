@@ -3,8 +3,8 @@
   "version": "2.0.0",
   "description": "Root runner for Lab Overall Ledger",
   "scripts": {
-    "start": "npm --prefix \"Lab Overall Ledger/backend\" start",
-    "dev": "npm --prefix \"Lab Overall Ledger/backend\" run dev",
-    "install:all": "npm --prefix \"Lab Overall Ledger/backend\" install"
+    "start": "npm --prefix \"backend\" start",
+    "dev": "npm --prefix \"backend\" run dev",
+    "install:all": "npm --prefix \"backend\" install"
   }
 }
