@@ -119,7 +119,7 @@ export default function CsvImportModal({
               {rows.slice(0, 5).map((r, i) => (
                 <tr key={i}>
                   {templateCols.slice(0, 4).map((c) => (
-                    <td key={c}>{r[c] || '—'}</td>
+                    <td key={c}>{r[c] ?? r[c.toLowerCase()] ?? r[c.toLowerCase().replace(/[\s-]+/g, '_')] ?? '—'}</td>
                   ))}
                 </tr>
               ))}

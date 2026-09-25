@@ -91,17 +91,10 @@ export function downloadCSV(filename, csvText) {
 }
 
 export const EQUIPMENT_TEMPLATE_COLS = [
-  'name',
-  'category',
-  'code',
-  'serial',
-  'model',
-  'supplier',
-  'purchase_date',
-  'location',
-  'condition_note',
-  'notes',
-  'qty_total',
+  'Items',
+  'Quantity',
+  'Location',
+  'Status',
 ];
 
 export const CONSUMABLE_TEMPLATE_COLS = [

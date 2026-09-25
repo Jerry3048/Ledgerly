@@ -82,8 +82,9 @@ router.delete('/:id', requireAuth, requireAdmin, async (req, res, next) => {
 });
 
 // Bulk import — accepts JSON rows parsed from a CSV file on the client.
-// Body: { items: [{ name, category, category_id, code, serial, model,
-//   supplier, purchase_date, location, condition_note, notes, qty_total }] }
+// Canonical template (lab-inventory-import.csv):
+//   Items,Quantity,Location,Status
+// Body: { items: [{ Items, Quantity, Location, Status }] }
 // Aliases accepted (so a raw physical-count sheet works as-is):
 //   name <- items | item | equipment | equipment_name
 //   qty_total <- quantity | qty | total | stock

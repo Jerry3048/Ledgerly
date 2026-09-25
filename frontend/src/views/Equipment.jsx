@@ -287,17 +287,10 @@ export default function EquipmentView({ onRequest }) {
                   'equipment-export.csv',
                   toCSV(
                     rows.map((e) => ({
-                      name: e.name || '',
-                      category: catName(e.category_id) === '—' ? '' : catName(e.category_id),
-                      code: e.code || '',
-                      serial: e.serial || '',
-                      model: e.model || '',
-                      supplier: e.supplier || '',
-                      purchase_date: e.purchase_date || '',
-                      location: e.location || '',
-                      condition_note: e.condition_note || '',
-                      notes: e.notes || '',
-                      qty_total: e.qty_total ?? 0,
+                      Items: e.name || '',
+                      Quantity: e.qty_total ?? 0,
+                      Location: e.location || '',
+                      Status: e.condition_note || '',
                     })),
                     EQUIPMENT_TEMPLATE_COLS
                   )
@@ -443,17 +436,10 @@ export default function EquipmentView({ onRequest }) {
           templateCols={EQUIPMENT_TEMPLATE_COLS}
           templateFilename="equipment-template.csv"
           sampleRow={{
-            name: 'Binocular Microscope',
-            category: 'Optical Instruments',
-            code: 'EQ-0001',
-            serial: 'SN-MC-2201',
-            model: 'Olympus CX23',
-            supplier: 'ScienceMart Ltd',
-            purchase_date: '2023-09-12',
-            location: 'Lab A — Bench 3',
-            condition_note: 'Good',
-            notes: '',
-            qty_total: '8',
+            Items: 'Type C Charger',
+            Quantity: '5',
+            Location: 'Microprocessor Lab',
+            Status: 'active',
           }}
           onClose={() => setShowImport(false)}
           onDone={async () => {
