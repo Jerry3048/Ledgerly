@@ -103,7 +103,6 @@ app.use(
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/categories', require('./routes/categories'));
 app.use('/api/equipment', require('./routes/equipment'));
-app.use('/api/consumables', require('./routes/consumables'));
 app.use('/api/borrows', require('./routes/borrows'));
 app.use('/api/maintenance', require('./routes/maintenance'));
 app.use('/api/users', require('./routes/users'));

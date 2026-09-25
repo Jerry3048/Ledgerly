@@ -5,7 +5,7 @@ import { useApp } from '../store';
 import { Stamp } from '../components';
 
 export default function ReportsView() {
-  const { equipment, categories, borrows, consumables, maintenance, eqById } =
+  const { equipment, categories, borrows, maintenance, eqById } =
     useApp();
 
   const num = (v) => Number(v) || 0;
@@ -31,7 +31,6 @@ export default function ReportsView() {
 
   const borrowedNow = borrows.filter((b) => b.status === 'borrowed');
   const damagedItems = equipment.filter((e) => num(e.qty_damaged) > 0);
-  const lowStock = consumables.filter((c) => c.stock <= c.reorder_level);
   const dueMaintenance = maintenance.filter((m) => m.status !== 'completed');
 
   return (
@@ -189,42 +188,6 @@ export default function ReportsView() {
                     <td className="mono">{e.code || ''}</td>
                     <td className="mono">{e.qty_damaged}</td>
                     <td>{e.location || ''}</td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <div className="report-block">
-        <h4>Low-stock consumables ({lowStock.length})</h4>
-        <div className="ledger-wrap">
-          <table className="ledger">
-            <thead>
-              <tr>
-                <th>Consumable</th>
-                <th>Stock</th>
-                <th>Reorder level</th>
-                <th>Location</th>
-              </tr>
-            </thead>
-            <tbody>
-              {lowStock.length === 0 ? (
-                <tr>
-                  <td colSpan="4">
-                    All consumables are above reorder level.
-                  </td>
-                </tr>
-              ) : (
-                lowStock.map((c) => (
-                  <tr key={c.id}>
-                    <td>{c.name}</td>
-                    <td className="mono">
-                      {c.stock} {c.unit}
-                    </td>
-                    <td className="mono">{c.reorder_level}</td>
-                    <td>{c.location || ''}</td>
                   </tr>
                 ))
               )}

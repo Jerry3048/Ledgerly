@@ -25,7 +25,6 @@ export const roleLabels = {
 const SETTERS = {
   categories: 'categories',
   equipment: 'equipment',
-  consumables: 'consumables',
   borrows: 'borrows',
   maintenance: 'maintenance',
   users: 'users',
@@ -35,7 +34,6 @@ export function AppProvider({ children }) {
   const [me, setMe] = useState(null);
   const [categories, setCategories] = useState([]);
   const [equipment, setEquipment] = useState([]);
-  const [consumables, setConsumables] = useState([]);
   const [borrows, setBorrows] = useState([]);
   const [maintenance, setMaintenance] = useState([]);
   const [users, setUsers] = useState([]);
@@ -57,7 +55,6 @@ export function AppProvider({ children }) {
     (key, rows) => {
       if (key === 'categories') setCategories(rows);
       else if (key === 'equipment') setEquipment(rows);
-      else if (key === 'consumables') setConsumables(rows);
       else if (key === 'borrows') setBorrows(rows);
       else if (key === 'maintenance') setMaintenance(rows);
       else if (key === 'users') setUsers(rows);
@@ -80,7 +77,7 @@ export function AppProvider({ children }) {
       const u = user || me;
       const staff = !!u && (u.role === 'admin' || u.role === 'officer');
       const admin = !!u && u.role === 'admin';
-      const keys = ['categories', 'equipment', 'consumables', 'borrows'];
+      const keys = ['categories', 'equipment', 'borrows'];
       if (staff) keys.push('maintenance');
       if (admin) keys.push('users');
       await reload(keys);
@@ -97,7 +94,6 @@ export function AppProvider({ children }) {
     setMe,
     categories,
     equipment,
-    consumables,
     borrows,
     maintenance,
     users,

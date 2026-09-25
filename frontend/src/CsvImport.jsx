@@ -1,4 +1,4 @@
-/* LabLedger — shared CSV import modal (equipment + consumables). */
+/* LabLedger — shared CSV import modal (equipment). */
 import React, { useRef, useState } from 'react';
 import { api } from './api';
 import { Modal } from './components';

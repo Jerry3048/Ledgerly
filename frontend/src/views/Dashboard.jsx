@@ -5,7 +5,7 @@ import { useApp } from '../store';
 import { AlertRow, TagCard } from '../components';
 
 export default function DashboardView() {
-  const { me, equipment, consumables, borrows, maintenance, isStaff, eqById } =
+  const { me, equipment, borrows, maintenance, isStaff, eqById } =
     useApp();
 
   const num = (v) => Number(v) || 0;
@@ -23,10 +23,6 @@ export default function DashboardView() {
     (s, e) => s + num(e.qty_maintenance),
     0
   );
-  const lowStock = consumables.filter(
-    (c) => c.stock <= c.reorder_level
-  ).length;
-
   const myBorrows = isStaff
     ? borrows
     : borrows.filter((b) => b.borrower_user_id === me.id);
@@ -44,7 +40,6 @@ export default function DashboardView() {
     )
     .slice(0, 5);
 
-  const lowRows = consumables.filter((c) => c.stock <= c.reorder_level);
   const maintRows = isStaff
     ? maintenance.filter((m) => m.status !== 'completed')
     : [];
@@ -77,11 +72,6 @@ export default function DashboardView() {
               value={maintUnits}
               label="Units under maintenance"
               cls={maintUnits ? 'warn' : ''}
-            />
-            <TagCard
-              value={lowStock}
-              label="Low-stock consumables"
-              cls={lowStock ? 'warn' : ''}
             />
             <TagCard
               value={overdue}
@@ -143,19 +133,13 @@ export default function DashboardView() {
         </div>
         <div className="panel">
           <div className="panel-head">
-            <h3>Stock &amp; maintenance alerts</h3>
+            <h3>Maintenance alerts</h3>
           </div>
           <div className="panel-body">
-            {lowRows.length === 0 && maintRows.length === 0 ? (
-              <p className="alert-empty">No stock or maintenance alerts.</p>
+            {maintRows.length === 0 ? (
+              <p className="alert-empty">No maintenance alerts.</p>
             ) : (
               <>
-                {lowRows.map((c) => (
-                  <AlertRow key={'c' + c.id} color="amber">
-                    <strong>{c.name}</strong> — {c.stock} {c.unit}(s) left,
-                    reorder at {c.reorder_level}
-                  </AlertRow>
-                ))}
                 {maintRows.map((m) => (
                   <AlertRow key={'m' + m.id} color="red">
                     <strong>{(eqById(m.equipment_id) || {}).name || '—'}</strong>{' '}

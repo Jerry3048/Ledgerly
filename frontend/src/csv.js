@@ -96,12 +96,3 @@ export const EQUIPMENT_TEMPLATE_COLS = [
   'Location',
   'Status',
 ];
-
-export const CONSUMABLE_TEMPLATE_COLS = [
-  'name',
-  'category',
-  'unit',
-  'stock',
-  'reorder_level',
-  'location',
-];

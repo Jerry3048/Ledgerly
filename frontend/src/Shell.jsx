@@ -8,7 +8,6 @@ import { roleLabels, useApp } from './store';
 import { BrandIcon, Modal, lockBodyScroll } from './components';
 import DashboardView from './views/Dashboard';
 import EquipmentView from './views/Equipment';
-import ConsumablesView from './views/Consumables';
 import BorrowView from './views/Borrow';
 import MaintenanceView from './views/Maintenance';
 import ReportsView from './views/Reports';
@@ -110,16 +109,13 @@ function ChangePasswordModal({ onClose }) {
 }
 
 export default function Shell() {
-  const { me, setMe, isStaff, isAdmin, consumables, borrows } = useApp();
+  const { me, setMe, isStaff, isAdmin, borrows } = useApp();
   const [view, setView] = useState('dashboard');
   const [navOpen, setNavOpen] = useState(false);
   const [showChangePw, setShowChangePw] = useState(false);
   // Equipment "Request" button jumps to Borrow with the form pre-opened.
   const [borrowPreset, setBorrowPreset] = useState(null);
 
-  const lowStock = consumables.filter(
-    (c) => c.stock <= c.reorder_level
-  ).length;
   const overdue = (
     isStaff ? borrows : borrows.filter((b) => b.borrower_user_id === me.id)
   ).filter(isOverdue).length;
@@ -188,15 +184,6 @@ export default function Shell() {
           onNavigate={() => setNavOpen(false)}
         >
           Equipment
-        </NavItem>
-        <NavItem
-          id="consumables"
-          view={view}
-          setView={setView}
-          badge={lowStock}
-          onNavigate={() => setNavOpen(false)}
-        >
-          Consumables
         </NavItem>
         <NavItem
           id="borrow"
@@ -285,9 +272,6 @@ export default function Shell() {
           {view === 'equipment' && (
             <EquipmentView onRequest={requestEquipment} />
           )}
-        </div>
-        <div className={'view' + (view === 'consumables' ? ' active' : '')}>
-          {view === 'consumables' && <ConsumablesView />}
         </div>
         <div className={'view' + (view === 'borrow' ? ' active' : '')}>
           {view === 'borrow' && (

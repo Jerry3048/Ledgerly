@@ -109,7 +109,7 @@ export default function Login() {
           <h1>Legerly</h1>
         </div>
         <p className="login-sub">
-          Equipment &amp; consumable inventory, borrowing and maintenance
+          Equipment inventory, borrowing and maintenance
           register.
         </p>
 

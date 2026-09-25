@@ -6,7 +6,7 @@ require('dotenv').config({ path: require('path').join(__dirname, '..', '.env') }
 
 const bcrypt  = require('bcryptjs');
 const db      = require('./index');
-const { users, categories, equipment, consumables, borrows, maintenance } = require('./schema');
+const { users, categories, equipment, borrows, maintenance } = require('./schema');
 const { count } = require('drizzle-orm');
 
 const hash  = (pw) => bcrypt.hashSync(pw, 10);
@@ -110,16 +110,6 @@ async function seed() {
   await addEquip('Projector',                    'Input / Output & Peripherals',    'EQ-0060', null, null, null, null, 'Digital Lab',        'Faulty', 'Physical count: faulty - requires assessment.', 4, 0, 4);
   await addEquip('Monitors',                     'Computer Systems',                'EQ-0061', null, null, null, null, 'Digital Lab',        'Faulty', 'Physical count: faulty - requires assessment.', 12, 0, 12);
   await addEquip('Chairs',                       'Furniture, Safety & Office',      'EQ-0062', null, null, null, null, 'Digital Lab',        'Faulty', 'Physical count: faulty - requires assessment.', 3, 0, 3);
-
-  /* ---------- consumables ---------- */
-  await db.insert(consumables).values([
-    { name: 'Nitrile Gloves (box)',           category: 'PPE',     unit: 'box',   stock: 42, reorder_level: 15, location: 'Store Room'         },
-    { name: 'Microscope Slides (pack of 50)', category: 'Glassware',unit: 'pack', stock:  6, reorder_level: 10, location: 'Lab A — Cabinet 4'   },
-    { name: 'Ethanol 95% (litre)',            category: 'Reagent', unit: 'litre', stock: 18, reorder_level:  8, location: 'Chemical Store'      },
-    { name: 'Litmus Paper (roll)',            category: 'Reagent', unit: 'roll',  stock:  3, reorder_level:  5, location: 'Store Room'          },
-    { name: 'Test Tubes (dozen)',             category: 'Glassware',unit: 'dozen',stock: 25, reorder_level: 10, location: 'Lab A — Cabinet 3'   },
-    { name: 'Distilled Water (litre)',        category: 'Reagent', unit: 'litre', stock: 30, reorder_level: 12, location: 'Chemical Store'      },
-  ]);
 
   /* ---------- borrows: none — physical count confirms nothing is borrowed ---------- */
 

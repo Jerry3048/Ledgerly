@@ -45,17 +45,6 @@ const equipment = pgTable('equipment', {
   qty_maintenance: integer('qty_maintenance').notNull().default(0),
 });
 
-/* -------------------- consumables -------------------- */
-const consumables = pgTable('consumables', {
-  id:            serial('id').primaryKey(),
-  name:          text('name').notNull(),
-  category:      text('category'),
-  unit:          text('unit').notNull().default('unit'),
-  stock:         integer('stock').notNull().default(0),
-  reorder_level: integer('reorder_level').notNull().default(0),
-  location:      text('location'),
-});
-
 /* -------------------- borrows -------------------- */
 // status: 'pending' | 'borrowed' | 'returned' | 'rejected'  (enforced in app layer)
 const borrows = pgTable('borrows', {
@@ -90,4 +79,4 @@ const maintenance = pgTable('maintenance', {
   notes:          text('notes'),
 });
 
-module.exports = { users, categories, equipment, consumables, borrows, maintenance };
+module.exports = { users, categories, equipment, borrows, maintenance };
